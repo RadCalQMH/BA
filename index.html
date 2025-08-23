@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bone Age Template Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: #fff;
+      margin-top: 20px;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      width: 650px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.7em;
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    .intro {
+      font-size: 0.95em;
+      line-height: 1.5;
+      color: #444;
+      margin-bottom: 20px;
+      text-align: justify;
+    }
+
+    .gender-toggle {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .gender-button {
+      padding: 10px 20px;
+      border: 2px solid #007bff;
+      border-radius: 5px;
+      background-color: white;
+      color: #007bff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+    }
+
+    .gender-button.active {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .input-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #444;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1em;
+    }
+
+    #warningMsg, #sdsWarning {
+      display: none;
+      margin-top: 10px;
+      padding: 8px;
+      font-weight: bold;
+    }
+
+    #warningMsg {
+      color: #b30000; /* red critical consistency warning */
+    }
+
+    #sdsWarning {
+      color: #d35400; /* orange unusual-range warning */
+    }
+
+    #reportBox {
+      margin-top: 20px;
+      padding: 20px;
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      white-space: pre-line;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    button {
+      padding: 10px 16px;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    #clearBtn {
+      background: #dc3545;
+    }
+    #clearBtn:hover {
+      background: #a71d2a;
+    }
+
+    .footer {
+      margin-top: 25px;
+      font-size: 0.8em;
+      text-align: center;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Bone Age Template Generator</h1>
+    <p class="intro">
+      This webpage is designed to be used complimentary to existing Bone Age AI software to facilitate generation of reports.
+    </p>
+
+    <!-- Gender Toggle -->
+    <div class="gender-toggle">
+      <button class="gender-button active" onclick="selectGender(event, 'Male')">Male</button>
+      <button class="gender-button" onclick="selectGender(event, 'Female')">Female</button>
+    </div>
+
+    <!-- Input fields -->
+    <div class="input-group">
+      <label for="baGP">Bone Age (GP):</label>
+      <input type="number" id="baGP" step="0.1" onkeypress="return isNumberKey(event)">
+    </div>
+
+    <div class="input-group">
+      <label for="baSDS">BA SDS:</label>
+      <input type="number" id="baSDS" step="0.1" onkeypress="return isNumberKey(event)">
+    </div>
+
+    <div class="input-group">
+      <label for="baTW2">Bone Age (TW2):</label>
+      <input type="number" id="baTW2" step="0.1" onkeypress="return isNumberKey(event)">
+    </div>
+
+    <div class="input-group">
+      <label for="chronologicalAge">Age (years):</label>
+      <input type="number" id="chronologicalAge" step="0.1" required onkeypress="return isNumberKey(event)">
+    </div>
+
+    <!-- Warning messages -->
+    <div id="warningMsg">⚠️ <b>Check if BA(GP) and BA SDS are correctly entered.</b></div>
+    <div id="sdsWarning">⚠️ <b>Unusual BA SDS number, please double check if it is valid.</b></div>
+
+    <!-- Report output -->
+    <div id="reportBox">Start typing values to see the report...</div>
+
+    <!-- Buttons -->
+    <div class="button-row">
+      <button id="copyBtn" style="display:none;" onclick="copyReport()">Copy to Clipboard</button>
+      <button id="clearBtn" onclick="clearForm()">Clear</button>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      Designed by YM Chong with aid of generative AI by Perplexity.
+    </div>
+  </div>
+
+  <script>
+    let selectedGender = "Male"; // Default gender
+
+    function selectGender(event, gender) {
+      selectedGender = gender;
+      document.querySelectorAll('.gender-button').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      updateReport(); // refresh preview on gender change
+    }
+
+    // Allow numbers, decimal, + and -
+    function isNumberKey(evt) {
+      const char = evt.key;
+      if (!/[0-9.+-]/.test(char) &&
+          char !== "Backspace" &&
+          char !== "Delete" &&
+          char !== "ArrowLeft" &&
+          char !== "ArrowRight" &&
+          char !== "Tab") {
+        evt.preventDefault();
+        return false;
+      }
+      return true;
+    }
+
+    // Auto-clean invalid standalone inputs like '+' or '-'
+    function cleanInput(evt) {
+      const val = evt.target.value.trim();
+      if (val === "+" || val === "-" || val === "." || val === "+." || val === "-.") {
+        evt.target.value = "";
+      }
+    }
+
+    // SDS consistency + plausibility check (CORRECTED LOGIC)
+    function checkSDS(baGP, baSDS, chronologicalAge) {
+      const warningMsg = document.getElementById('warningMsg');
+      const sdsWarning = document.getElementById('sdsWarning');
+
+      // Default hide
+      warningMsg.style.display = "none";
+      sdsWarning.style.display = "none";
+
+      if (isNaN(baGP) || isNaN(baSDS) || isNaN(chronologicalAge)) {
+        return;
+      }
+
+      // ✅ Corrected condition
+      if ((chronologicalAge < baGP && baSDS < 0) ||
+          (chronologicalAge > baGP && baSDS > 0)) {
+        warningMsg.style.display = "block";
+      }
+
+      // Check unusual out-of-range SDS
+      if (baSDS < -5 || baSDS > 5) {
+        sdsWarning.style.display = "block";
+      }
+    }
+
+    // Live report updater
+    function updateReport() {
+      const baGP = parseFloat(document.getElementById('baGP').value);
+      const baSDS = parseFloat(document.getElementById('baSDS').value);
+      const baTW2 = parseFloat(document.getElementById('baTW2').value);
+      const chronologicalAge = parseFloat(document.getElementById('chronologicalAge').value);
+
+      checkSDS(baGP, baSDS, chronologicalAge);
+
+      if (isNaN(chronologicalAge) || isNaN(baGP) || isNaN(baSDS) || isNaN(baTW2)) {
+        document.getElementById('reportBox').innerText = "Start typing values to see the report...";
+        document.getElementById('copyBtn').style.display = "none";
+        return;
+      }
+
+      let report = `Left hand and wrist radiograph for bone age (frontal view) (BoneXpert: 3.2.2)\n
+Report:
+${selectedGender} patient with chronological age of ${chronologicalAge} years.\n
+Based on results of BoneXpert,
+- By Greulich & Pyle (GP), patient's bone age is ${baGP} years.
+- By Tanner-Whitehouse (TW2), patient's bone age is ${baTW2} years.\n
+The GP bone age Standard Deviation Scores (SDS) by BoneXpert (CauEu) is ${baSDS}.\n
+*(Bone age SDS = -1.0 means that the child's bone age is one standard deviation (SD) below the mean for children of the same age.)*`;
+
+      document.getElementById('reportBox').innerHTML = report.replace(/\*(.*?)\*/g, "<i>$1</i>");
+      document.getElementById('copyBtn').style.display = "inline-block";
+    }
+
+    // Copy to clipboard
+    function copyReport() {
+      const text = document.getElementById('reportBox').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Report copied to clipboard!");
+      });
+    }
+
+    // Clear form and reset all
+    function clearForm() {
+      document.querySelectorAll("input").forEach(input => input.value = "");
+      selectedGender = "Male"; // reset gender selection
+      document.querySelectorAll('.gender-button').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.gender-button')[0].classList.add('active'); // Male as default
+      document.getElementById('warningMsg').style.display = "none";
+      document.getElementById('sdsWarning').style.display = "none";
+      document.getElementById('reportBox').innerText = "Start typing values to see the report...";
+      document.getElementById('copyBtn').style.display = "none"; // hide copy until all inputs filled
+    }
+
+    // Attach live update and cleaning
+    document.querySelectorAll("input").forEach(input => {
+      input.addEventListener("input", updateReport);
+      input.addEventListener("blur", cleanInput); // clean when leaving field
+    });
+  </script>
+</body>
+</html>
