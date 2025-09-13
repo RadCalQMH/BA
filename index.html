@@ -15,7 +15,6 @@
       align-items: flex-start;
       min-height: 100vh;
     }
-
     .container {
       background: #fff;
       margin-top: 20px;
@@ -24,14 +23,12 @@
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
       width: 650px;
     }
-
     h1 {
       text-align: center;
       font-size: 1.7em;
       margin-bottom: 15px;
       color: #333;
     }
-
     .intro {
       font-size: 0.95em;
       line-height: 1.5;
@@ -39,14 +36,12 @@
       margin-bottom: 20px;
       text-align: justify;
     }
-
     .gender-toggle {
       display: flex;
       justify-content: center;
       gap: 15px;
-      margin-bottom: 25px;
+      margin-bottom: 15px;
     }
-
     .gender-button {
       padding: 10px 20px;
       border: 2px solid #007bff;
@@ -55,25 +50,22 @@
       color: #007bff;
       font-weight: bold;
       cursor: pointer;
-      transition: all 0.2s ease-in-out;
+      transition: background-color 0.2s ease, color 0.2s ease;
+      user-select: none;
     }
-
     .gender-button.active {
       background-color: #007bff;
       color: white;
     }
-
     .input-group {
       margin-bottom: 15px;
     }
-
     label {
       display: block;
       font-weight: bold;
       margin-bottom: 5px;
       color: #444;
     }
-
     input[type="number"] {
       width: 100%;
       padding: 10px;
@@ -81,7 +73,7 @@
       border-radius: 5px;
       font-size: 1em;
     }
-
+    #genderWarning,
     #warningMsg,
     #sdsWarning,
     #baGpTw2Warning {
@@ -89,38 +81,40 @@
       margin-top: 10px;
       padding: 8px;
       font-weight: bold;
-    }
-
-    #warningMsg {
-      color: #b30000; /* red critical consistency warning */
-    }
-
-    #sdsWarning {
-      color: #d35400; /* orange unusual-range warning */
-    }
-
-    #baGpTw2Warning {
-      color: #155724; /* dark green */
-      background-color: #d4edda;
-      border: 1px solid #c3e6cb;
       border-radius: 4px;
     }
-
+    #genderWarning {
+      color: #b30000;
+      background-color: #f8d7da;
+      border: 1px solid #f5c2c7;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    #warningMsg {
+      color: #b30000;
+    }
+    #sdsWarning {
+      color: #d35400;
+    }
+    #baGpTw2Warning {
+      color: #155724;
+      background-color: #d4edda;
+      border: 1px solid #c3e6cb;
+    }
     #reportBox {
-      margin-top: 20px;
+      margin-top: 10px;
       padding: 20px;
       background: #f9f9f9;
       border: 1px solid #ddd;
       border-radius: 5px;
       white-space: pre-line;
+      min-height: 140px;
     }
-
     .button-row {
       display: flex;
       gap: 10px;
       margin-top: 10px;
     }
-
     button {
       padding: 10px 16px;
       background: #007bff;
@@ -129,19 +123,18 @@
       border-radius: 5px;
       cursor: pointer;
       font-size: 1em;
+      user-select: none;
+      transition: background-color 0.2s ease;
     }
-
     button:hover {
       background: #0056b3;
     }
-
     #clearBtn {
       background: #dc3545;
     }
     #clearBtn:hover {
       background: #a71d2a;
     }
-
     .footer {
       margin-top: 25px;
       font-size: 0.8em;
@@ -156,194 +149,235 @@
     <p class="intro">
       This webpage is designed to be used complimentary to existing Bone Age AI software to facilitate generation of reports.
     </p>
-
     <!-- Gender Toggle -->
     <div class="gender-toggle">
-      <button class="gender-button active" onclick="selectGender(event, 'Male')">Male</button>
+      <button class="gender-button" onclick="selectGender(event, 'Male')">Male</button>
       <button class="gender-button" onclick="selectGender(event, 'Female')">Female</button>
     </div>
-
     <!-- Input fields -->
     <div class="input-group">
       <label for="baGP">Bone Age (GP):</label>
-      <input type="number" id="baGP" step="0.1" onkeypress="return isNumberKey(event)" />
+      <input type="number" id="baGP" step="0.01" onkeypress="return isNumberKey(event)" />
     </div>
-
     <div class="input-group">
       <label for="baSDS">BA SDS:</label>
-      <input type="number" id="baSDS" step="0.1" onkeypress="return isNumberKey(event)" />
+      <input type="number" id="baSDS" step="0.01" onkeypress="return isNumberKey(event)" />
     </div>
-
     <div class="input-group">
       <label for="baTW2">Bone Age (TW2):</label>
-      <input type="number" id="baTW2" step="0.1" onkeypress="return isNumberKey(event)" />
+      <input type="number" id="baTW2" step="0.01" onkeypress="return isNumberKey(event)" />
     </div>
-
     <div class="input-group">
       <label for="chronologicalAge">Age (years):</label>
-      <input type="number" id="chronologicalAge" step="0.1" required onkeypress="return isNumberKey(event)" />
+      <input type="number" id="chronologicalAge" step="0.01" required onkeypress="return isNumberKey(event)" />
     </div>
 
-    <!-- Warning messages -->
-    <div id="warningMsg">⚠️ <b>Check if BA(GP) and BA SDS are correctly entered.</b></div>
-    <div id="sdsWarning">⚠️ <b>Unusual BA SDS number, please double check if it is valid.</b></div>
-    <div id="baGpTw2Warning">⚠️ <b>Inconsistency detected: BA (GP) and BA (TW2) are on opposite sides of actual age.</b></div>
+    <div id="genderWarning"> <b>Please select a gender before generating the report.</b></div>
 
+    <!-- Warning messages -->
+    <div id="warningMsg"> <b>Check if BA(GP) and BA SDS are correctly entered.</b></div>
+    <div id="sdsWarning"> <b>Unusual BA SDS number, please double check if it is valid.</b></div>
+    <div id="baGpTw2Warning"> <b>Inconsistency detected: BA (GP) and BA (TW2) are on opposite sides of actual age.</b></div>
+    
     <!-- Report output -->
     <div id="reportBox">Start typing values to see the report...</div>
-
+    
     <!-- Buttons -->
     <div class="button-row">
       <button id="copyBtn" style="display:none;" onclick="copyReport()">Copy to Clipboard</button>
       <button id="clearBtn" onclick="clearForm()">Clear</button>
     </div>
-
+    
     <!-- Footer -->
     <div class="footer">
       Designed by YM Chong with aid of generative AI by Perplexity.
     </div>
   </div>
-
   <script>
-    let selectedGender = "Male"; // Default gender
+    let selectedGender = "";
 
     function selectGender(event, gender) {
       selectedGender = gender;
-      document.querySelectorAll(".gender-button").forEach((btn) => btn.classList.remove("active"));
+      document.querySelectorAll(".gender-button").forEach(btn => btn.classList.remove("active"));
       event.target.classList.add("active");
-      updateReport(); // refresh preview on gender change
+      updateReport();
     }
 
-    // Allow numbers, decimal, + and -
     function isNumberKey(evt) {
       const char = evt.key;
-      if (
-        !/[0-9.+-]/.test(char) &&
-        char !== "Backspace" &&
-        char !== "Delete" &&
-        char !== "ArrowLeft" &&
-        char !== "ArrowRight" &&
-        char !== "Tab"
-      ) {
+      if (!/[0-9.+-]/.test(char) &&
+          !["Backspace","Delete","ArrowLeft","ArrowRight","Tab"].includes(char)) {
         evt.preventDefault();
         return false;
       }
       return true;
     }
 
-    // Auto-clean invalid standalone inputs like '+' or '-'
     function cleanInput(evt) {
       const val = evt.target.value.trim();
-      if (val === "+" || val === "-" || val === "." || val === "+." || val === "-.") {
+      if (["+", "-", ".", "+.", "-."].includes(val)) {
         evt.target.value = "";
       }
     }
 
-    // SDS consistency + plausibility check (CORRECTED LOGIC)
+    function toRoundedValue(value) {
+      if (isNaN(value)) return NaN;
+      return Math.round(value * 100) / 100;
+    }
+
     function checkSDS(baGP, baSDS, chronologicalAge) {
       const warningMsg = document.getElementById("warningMsg");
       const sdsWarning = document.getElementById("sdsWarning");
-
-      // Default hide
       warningMsg.style.display = "none";
       sdsWarning.style.display = "none";
+      if (isNaN(baGP) || isNaN(baSDS) || isNaN(chronologicalAge)) return;
 
-      if (isNaN(baGP) || isNaN(baSDS) || isNaN(chronologicalAge)) {
-        return;
-      }
-
-      // Corrected condition
       if ((chronologicalAge < baGP && baSDS < 0) || (chronologicalAge > baGP && baSDS > 0)) {
         warningMsg.style.display = "block";
       }
 
-      // Check unusual out-of-range SDS
+      if (baGP === chronologicalAge && baSDS !== 0) {
+        warningMsg.style.display = "block";
+      }
+
       if (baSDS < -5 || baSDS > 5) {
         sdsWarning.style.display = "block";
       }
     }
 
-    // New check for BA(GP) and BA(TW2) inconsistency
     function checkBaGpTw2Consistency(baGP, baTW2, chronologicalAge) {
-      const baGpTw2Warning = document.getElementById("baGpTw2Warning");
-
-      // Default hide
-      baGpTw2Warning.style.display = "none";
-
-      if (isNaN(baGP) || isNaN(baTW2) || isNaN(chronologicalAge)) {
-        return;
-      }
-
+      const warning = document.getElementById("baGpTw2Warning");
+      warning.style.display = "none";
+      if (isNaN(baGP) || isNaN(baTW2) || isNaN(chronologicalAge)) return;
       const gpAbove = baGP > chronologicalAge;
       const gpBelow = baGP < chronologicalAge;
       const tw2Above = baTW2 > chronologicalAge;
       const tw2Below = baTW2 < chronologicalAge;
-
-      // Show warning if one bone age is above and the other is below age
       if ((gpAbove && tw2Below) || (gpBelow && tw2Above)) {
-        baGpTw2Warning.style.display = "block";
+        warning.style.display = "block";
       }
     }
 
-    // Live report updater
+    function generateReportText(baGP, baSDS, baTW2, chronologicalAge) {
+      const roundedAge = toRoundedValue(chronologicalAge);
+      const roundedBaGP = toRoundedValue(baGP);
+      const roundedBaSDS = toRoundedValue(baSDS);
+      const roundedBaTW2 = toRoundedValue(baTW2);
+      const genderText = selectedGender ? `${selectedGender} patient` : "Patient";
+      return (
+        `Left hand and wrist radiograph for bone age (frontal view) (BoneXpert: 3.2.2)\n\n` +
+        `Report:\n` +
+        `${genderText} with chronological age of ${roundedAge.toFixed(2)} years.\n\n` +
+        `Based on results of BoneXpert,\n` +
+        `- By Greulich & Pyle (GP), patient's bone age is ${roundedBaGP.toFixed(2)} years.\n` +
+        `- By Tanner-Whitehouse (TW2), patient's bone age is ${roundedBaTW2.toFixed(2)} years.\n\n` +
+        `The GP bone age Standard Deviation Scores (SDS) by BoneXpert (CauEu) is ${roundedBaSDS.toFixed(2)}.\n\n` +
+        `(Bone age SDS = -1.0 means that the child's bone age is one standard deviation (SD) below the mean for children of the same age.)`
+      );
+    }
+
     function updateReport() {
-      const baGP = parseFloat(document.getElementById("baGP").value);
-      const baSDS = parseFloat(document.getElementById("baSDS").value);
-      const baTW2 = parseFloat(document.getElementById("baTW2").value);
-      const chronologicalAge = parseFloat(document.getElementById("chronologicalAge").value);
+      const genderWarning = document.getElementById("genderWarning");
+      const baGPfield = document.getElementById("baGP").value;
+      const baSDSfield = document.getElementById("baSDS").value;
+      const baTW2field = document.getElementById("baTW2").value;
+      const chronologicalAgeField = document.getElementById("chronologicalAge").value;
+
+      const baGP = parseFloat(baGPfield);
+      const baSDS = parseFloat(baSDSfield);
+      const baTW2 = parseFloat(baTW2field);
+      const chronologicalAge = parseFloat(chronologicalAgeField);
+
+      genderWarning.style.display = selectedGender ? "none" : "block";
 
       checkSDS(baGP, baSDS, chronologicalAge);
       checkBaGpTw2Consistency(baGP, baTW2, chronologicalAge);
 
-      if (
-        isNaN(chronologicalAge) ||
-        isNaN(baGP) ||
-        isNaN(baSDS) ||
-        isNaN(baTW2)
-      ) {
-        document.getElementById("reportBox").innerText = "Start typing values to see the report...";
-        document.getElementById("copyBtn").style.display = "none";
+      const allNumbersValid = 
+        baGPfield !== "" && !isNaN(baGP) &&
+        baSDSfield !== "" && !isNaN(baSDS) &&
+        baTW2field !== "" && !isNaN(baTW2) &&
+        chronologicalAgeField !== "" && !isNaN(chronologicalAge);
+
+      const reportBox = document.getElementById("reportBox");
+      const copyBtn = document.getElementById("copyBtn");
+
+      if (!selectedGender && !allNumbersValid) {
+        reportBox.innerText = "Start typing values to see the report...";
+        copyBtn.style.display = "none";
         return;
       }
 
-      let report = `Left hand and wrist radiograph for bone age (frontal view) (BoneXpert: 3.2.2)\n
-Report:
-${selectedGender} patient with chronological age of ${chronologicalAge} years.\n
-Based on results of BoneXpert,
-- By Greulich & Pyle (GP), patient's bone age is ${baGP} years
-- By Tanner-Whitehouse (TW2), patient's bone age is ${baTW2} years\n
-The GP bone age Standard Deviation Scores (SDS) by BoneXpert (CauEu) is ${baSDS}.\n
-*(Bone age SDS = -1.0 means that the child's bone age is one standard deviation (SD) below the mean for children of the same age.)*`;
+      if (!allNumbersValid) {
+        const genderText = selectedGender ? `${selectedGender} patient` : "Patient";
+        reportBox.innerText = `Report:\n\n${genderText}\n\n(Please complete the input fields for full report.)`;
+        copyBtn.style.display = "none";
+        return;
+      }
 
-      document.getElementById("reportBox").innerHTML = report.replace(/\*(.*?)\*/g, "<i>$1</i>");
-      document.getElementById("copyBtn").style.display = "inline-block";
+      let reportText = generateReportText(baGP, baSDS, baTW2, chronologicalAge);
+      let lines = reportText.split('\n');
+      if (lines.length > 1) {
+        const lastIdx = lines.length - 1;
+        if (lines[lastIdx]) lines[lastIdx] = '<i>' + lines[lastIdx] + '</i>';
+      }
+      reportBox.innerHTML = lines.join('<br>');
+      copyBtn.style.display = "inline-block";
     }
 
-    // Copy to clipboard
     function copyReport() {
-      const text = document.getElementById("reportBox").innerText;
-      navigator.clipboard.writeText(text).then(() => {
-        alert("Report copied to clipboard!");
-      });
+      const baGP = parseFloat(document.getElementById("baGP").value);
+      const baSDS = parseFloat(document.getElementById("baSDS").value);
+      const baTW2 = parseFloat(document.getElementById("baTW2").value);
+      const chronologicalAge = parseFloat(document.getElementById("chronologicalAge").value);
+      const plainText = generateReportText(baGP, baSDS, baTW2, chronologicalAge);
+
+      let lines = plainText.split('\n');
+      if (lines.length > 1) {
+        const lastIdx = lines.length - 1;
+        lines[lastIdx] = `<i>${lines[lastIdx]}</i>`;
+      }
+      const htmlContent = `<html><body>${lines.join('<br>')}</body></html>`;
+
+      if (navigator.clipboard && navigator.clipboard.write) {
+        const blobInput = new Blob([htmlContent], { type: 'text/html' });
+        const clipboardItemInput = new ClipboardItem({
+          'text/html': blobInput,
+          'text/plain': new Blob([plainText], { type: 'text/plain' })
+        });
+        navigator.clipboard.write([clipboardItemInput])
+          .then(() => alert('Report copied to clipboard with formatting!'))
+          .catch(() => fallbackCopyText(plainText));
+      } else {
+        fallbackCopyText(plainText);
+      }
+
+      function fallbackCopyText(text) {
+        navigator.clipboard.writeText(text).then(() => {
+          alert('Report copied as plain text (formatting may be lost).');
+        });
+      }
     }
 
-    // Clear form and reset all
     function clearForm() {
-      document.querySelectorAll("input").forEach((input) => (input.value = ""));
-      selectedGender = "Male"; // reset gender selection
-      document.querySelectorAll(".gender-button").forEach((btn) => btn.classList.remove("active"));
-      document.querySelectorAll(".gender-button")[0].classList.add("active"); // Male as default
+      document.querySelectorAll("input").forEach(input => input.value = "");
+      selectedGender = "";
+      document.querySelectorAll(".gender-button").forEach(btn => btn.classList.remove("active"));
+      document.getElementById("genderWarning").style.display = "none";
       document.getElementById("warningMsg").style.display = "none";
       document.getElementById("sdsWarning").style.display = "none";
       document.getElementById("baGpTw2Warning").style.display = "none";
       document.getElementById("reportBox").innerText = "Start typing values to see the report...";
-      document.getElementById("copyBtn").style.display = "none"; // hide copy until all inputs filled
+      document.getElementById("copyBtn").style.display = "none";
     }
 
-    // Attach live update and cleaning
-    document.querySelectorAll("input").forEach((input) => {
+    document.querySelectorAll("input").forEach(input => {
       input.addEventListener("input", updateReport);
-      input.addEventListener("blur", cleanInput); // clean when leaving field
+      input.addEventListener("blur", cleanInput);
+    });
+
+    document.querySelectorAll(".gender-button").forEach(btn => {
+      btn.addEventListener("click", (e) => selectGender(e, btn.textContent));
     });
   </script>
 </body>
